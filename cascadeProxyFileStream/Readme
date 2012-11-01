@@ -1,0 +1,52 @@
+Overview:
+The proxy server listens on to a socket for new connections. For each new connection two threads are created. One of the threads receives data from the server and the second thread pushes data to the client (next proxy server). 
+
+Synchronization:
+The two worker threads are synchronized by the way of mutex locks. This is the common read-write synchronization problem. The two threads share a common buffer, two flags, counters for read and write. Also a counter is maintained that takes into account the amount of buffer that has been filled. The reader can read only upto the point till where the writer has written into the buffer. The write-counter and read-counter are shared variables that indicate the total number of chunks that have been written/read from the common buffer. A pair of reader and writer flags are maintained. These flags indicate when the corresponding sockets for read and write have to closed. Once both the sockets are closed, both the threads are killed and the connections close.
+
+Streaming:
+For efficiency, data is streamed into chunks of size N bytes each. Each block of N bytes is read in by a reader worker thread. When the writer worker thread is scheduled, it sends the data to the client. This helps in a smaller overall response time, making the application responsive and efficient.
+
+Transport Protocol:
+For reliable transport, the application uses Transmission Control Protocol.
+
+Instructions:
+The overall project structure consists of three main files:
+1. server.cpp : This is the implementation of the main server. It reads a file requested by the client. To run this server:
+./server <PORT>
+PORT specifies the port number on which the server has to be run.
+
+2. client.cpp: This is the client. It sends a message to the server specifying the name of the file. The filename can be changed by chaning the first line of file PROXY.IN. To run the client:
+./client 
+
+3. proxyMultiThreaded.cpp: This is the proxy server. The proxy server listens for connections from the client. On getting a request from the client the proxy server sets up a connection with the server. It supports streaming of files. To run it 
+
+./proxy <PORTP> <serverHostName> <serverPort>
+where,
+- PORTP specifies the port on which the proxy has to be run
+- serverHostName specifies the host name of the server to which the client has to be connected
+- serverPort specifies the port number of the server
+
+4. header.h - contains header files and some global constants. The chunk size is defined within this file.
+
+5. Makefile - Compiles the complete project and builds the object files.
+
+6. PROXY.IN - The first line specifies the file which the server sends to the client. The second line specifies two arguments:
+<serverHostName> <serverPort>
+where,
+- serverHostName specifies the host name of the server to which the client has to be connected
+- serverPort specifies the port number of the server
+7. sample.txt- The sample file which the server sends as default.
+8. outputSample.txt - The file downloaded by the client.
+A simple diff shows that they are the same.
+
+
+
+
+
+
+
+
+
+
+
