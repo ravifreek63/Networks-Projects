@@ -1,1 +1,2 @@
-This repository is for keeping all network related projects that I have done.
+This repository is for keeping all network related projects that I have done. Currently it has the following projects:
+1. Cascade Proxy File Stream Proxy - The project provides implementation of a set of proxy servers on raw TCP sockets. A client is setup which can request for a file from a server. The server streams the file through N different proxies. 
